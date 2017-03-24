@@ -4,15 +4,19 @@
   "description": "Node Blog API",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha ./test",
     "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.17.1",
+    "chai": "^3.5.0",
     "express": "^4.15.2",
     "morgan": "^1.8.1",
     "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^3.2.0"
   }
 }
