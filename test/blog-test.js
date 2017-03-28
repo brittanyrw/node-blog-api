@@ -3,7 +3,6 @@ const chaiHttp = require('chai-http');
 
 const should = chai.should();
 
-const {BlogPost} = require('../models');
 const {app, closeServer, runServer} = require('../server');
 
 chai.use(chaiHttp);
@@ -55,29 +54,42 @@ describe('Blog Posts', function() {
       });
   });
 
-  it('should update a blog post on PUT', function() {
-    
-    const updateData = {
-      title: 'This is an update',
-      content: 'This is updated content'
-    };
-    return BlogPost
-      .findOne()
-      .exec()
-      .then(post => {
-        updateData.id = post.id;
-  
+    it('should delete blog posts on DELETE', function() {
+    return chai.request(app)
+      .get('/blog-posts')
+      .then(function(res) {
         return chai.request(app)
-          .put(`/blog-posts/${updateData.id}`)
-          .send(updateData);
+          .delete(`/blog-posts/${res.body[0].id}`);
       })
-    .then(function(res) {
-      res.should.have.status(200);
-      res.should.be.json;
-      res.body.title.should.equal(updateData.title);
-      res.body.content.should.equal(updateData.content);
-    })
+      .then(function(res) {
+        res.should.have.status(204);
+      });
   });
 
+  it('should update blog posts on PUT', function() {
+    const updateData = {
+      title: 'This is an update',
+      content: 'This is updated content',
+      author: 'Betty',
+      publishDate: 'date'
+    };
+        return chai.request(app)
+            .get('/blog-posts')
+            .then(function(res) {
+                updateData.id = res.body[0].id;
+                return chai.request(app)
+                    .put(`/blog-posts/${updateData.id}`)
+                    .send(updateData);
+            })
+            .then(function(res) {
+                res.should.have.status(200);
+                res.should.be.json;
+                res.body.should.be.a('object');
+                res.body.title.should.equal(updateData.title);
+                res.body.author.should.equal(updateData.author);
+                res.body.content.should.equal(updateData.content);
+                res.body.publishDate.should.equal(updateData.publishDate);
+            });
+    });
 
 });
